@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ESP32 Command Control</title>
+</head>
+<body>
+    <h2>ESP32 Command Control</h2>
+    <button onclick="sendCommand('forward')">Move Forward</button>
+    <button onclick="sendCommand('backward')">Move Backward</button>
+    <button onclick="sendCommand('left')">Turn Left</button>
+    <button onclick="sendCommand('right')">Turn Right</button>
+    
+    <script>
+        var websocket = new WebSocket('ws://localhost:8081');
+
+        websocket.onopen = function() {
+            console.log('WebSocket connected');
+        };
+
+        websocket.onerror = function(error) {
+            console.log('WebSocket Error: ' + error);
+        };
+
+        function sendCommand(direction) {
+            let startCommand = { "N": 4, "D1": 255, "D2": 255 };
+           // let stopCommand = { "N": 3, "D1": directionMapping[direction], "D2": 0 };
+
+            if (websocket && websocket.readyState === WebSocket.OPEN) {
+                websocket.send(JSON.stringify(startCommand));
+                console.log('Command sent: ' + JSON.stringify(startCommand));
+
+              
+            } else {
+                console.log('WebSocket is not connected.');
+            }
+        }
+
+        // Mapping directions to command values
+        const directionMapping = {
+            'forward': 1,
+            'backward': 2,
+            'left': 3,
+            'right': 4
+        };
+    </script>
+</body>
+</html>
